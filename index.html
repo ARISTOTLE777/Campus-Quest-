@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#E68361">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>CampusQuest AR - Rishihood University</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Mobile Status Bar -->
+    <div class="mobile-status-bar">
+        <div class="status-left">
+            <span class="time" id="current-time">4:00 PM</span>
+        </div>
+        <div class="status-center">
+            <div class="notch"></div>
+        </div>
+        <div class="status-right">
+            <span class="battery">🔋 85%</span>
+            <span class="signal">📶</span>
+        </div>
+    </div>
+
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="screen active">
+        <div class="splash-background"></div>
+        <div class="splash-content">
+            <div class="university-logo">
+                <div class="logo-circle">
+                    <span class="logo-text">RU</span>
+                </div>
+            </div>
+            <h1 class="app-title">CampusQuest AR</h1>
+            <p class="app-subtitle">Rishihood University Explorer</p>
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+            </div>
+            <p class="loading-text">Initializing AR Camera...</p>
+        </div>
+    </div>
+
+    <!-- Onboarding Screen -->
+    <div id="onboarding-screen" class="screen">
+        <div class="onboarding-background"></div>
+        <div class="onboarding-content">
+            <button class="skip-btn" id="skip-onboarding">Skip</button>
+            <div class="onboarding-slide active" data-slide="0">
+                <div class="slide-icon">📱</div>
+                <h2>Welcome to CampusQuest AR</h2>
+                <p>Use your phone's camera to explore Rishihood University campus in augmented reality</p>
+            </div>
+            <div class="onboarding-slide" data-slide="1">
+                <div class="slide-icon">📷</div>
+                <h2>Scan & Discover</h2>
+                <p>Point your camera at campus buildings and QR codes to unlock location-based trivia challenges</p>
+            </div>
+            <div class="onboarding-slide" data-slide="2">
+                <div class="slide-icon">🏆</div>
+                <h2>Earn Achievements</h2>
+                <p>Complete quizzes to earn AR badges and become the ultimate campus explorer</p>
+            </div>
+            <div class="slide-navigation">
+                <div class="nav-dots">
+                    <span class="dot active" data-slide="0"></span>
+                    <span class="dot" data-slide="1"></span>
+                    <span class="dot" data-slide="2"></span>
+                </div>
+                <button class="btn btn--primary" id="next-slide">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Screen -->
+    <div id="main-screen" class="screen">
+        <!-- AR Camera View -->
+        <div id="ar-camera" class="ar-view hidden">
+            <div class="camera-background"></div>
+            <div class="ar-overlay">
+                <div class="ar-header">
+                    <button class="ar-btn" id="close-ar">✕</button>
+                    <span class="ar-status">🔍 Scanning for locations...</span>
+                    <button class="ar-btn" id="ar-help">?</button>
+                </div>
+                
+                <div class="ar-scanner">
+                    <div class="scan-target">
+                        <div class="scan-corners">
+                            <div class="corner top-left"></div>
+                            <div class="corner top-right"></div>
+                            <div class="corner bottom-left"></div>
+                            <div class="corner bottom-right"></div>
+                        </div>
+                        <div class="scan-line"></div>
+                    </div>
+                </div>
+
+                <div class="ar-locations" id="ar-locations">
+                    <!-- AR location markers will be populated here -->
+                </div>
+
+                <div class="ar-footer">
+                    <button class="ar-action-btn" id="scan-qr">
+                        <span class="btn-icon">🔳</span>
+                        <span class="btn-text">Scan QR</span>
+                    </button>
+                    <div class="ar-compass">
+                        <div class="compass-needle" id="compass-needle"></div>
+                        <span class="compass-text">N</span>
+                    </div>
+                    <button class="ar-action-btn" id="capture-btn">
+                        <span class="btn-icon">📸</span>
+                        <span class="btn-text">Capture</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map View -->
+        <div id="map-view" class="view-content active">
+            <div class="map-header">
+                <h2>Campus Map</h2>
+                <p>Explore Rishihood University</p>
+            </div>
+            <div class="campus-map" id="campus-map">
+                <div class="campus-background">
+                    <img src="https://pplx-res.cloudinary.com/image/upload/v1758967329/pplx_project_search_images/91237be6caff1c32af1f7921b8beaa5fbd72d9dc.png" alt="Rishihood University Campus" class="campus-bg-image">
+                </div>
+                
+                <!-- AR Location Hotspots -->
+                <div class="ar-hotspot available" data-location-id="3" style="left: 35%; top: 65%;">
+                    <div class="hotspot-3d">
+                        <div class="hotspot-pin">📋</div>
+                        <div class="hotspot-label">C Block Reception</div>
+                        <div class="hotspot-glow"></div>
+                    </div>
+                </div>
+
+                <div class="ar-hotspot locked" data-location-id="1" style="left: 55%; top: 40%;">
+                    <div class="hotspot-3d">
+                        <div class="hotspot-pin">📚</div>
+                        <div class="hotspot-label">B Block Library</div>
+                        <div class="hotspot-glow"></div>
+                    </div>
+                </div>
+
+                <div class="ar-hotspot locked" data-location-id="2" style="left: 55%; top: 75%;">
+                    <div class="hotspot-3d">
+                        <div class="hotspot-pin">🎭</div>
+                        <div class="hotspot-label">B Block Auditorium</div>
+                        <div class="hotspot-glow"></div>
+                    </div>
+                </div>
+
+                <div class="ar-hotspot locked" data-location-id="4" style="left: 25%; top: 45%;">
+                    <div class="hotspot-3d">
+                        <div class="hotspot-pin">🍽️</div>
+                        <div class="hotspot-label">A Block Mess</div>
+                        <div class="hotspot-glow"></div>
+                    </div>
+                </div>
+
+                <div class="ar-hotspot locked" data-location-id="5" style="left: 75%; top: 55%;">
+                    <div class="hotspot-3d">
+                        <div class="hotspot-pin">🥘</div>
+                        <div class="hotspot-label">Pushpa Devi Mess</div>
+                        <div class="hotspot-glow"></div>
+                    </div>
+                </div>
+
+                <div class="ar-hotspot locked" data-location-id="6" style="left: 30%; top: 25%;">
+                    <div class="hotspot-3d">
+                        <div class="hotspot-pin">🏠</div>
+                        <div class="hotspot-label">R2 Residence</div>
+                        <div class="hotspot-glow"></div>
+                    </div>
+                </div>
+
+                <div class="ar-hotspot locked" data-location-id="7" style="left: 70%; top: 25%;">
+                    <div class="hotspot-3d">
+                        <div class="hotspot-pin">🏢</div>
+                        <div class="hotspot-label">R1 Residence</div>
+                        <div class="hotspot-glow"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress View -->
+        <div id="progress-view" class="view-content">
+            <div class="progress-header">
+                <h2>Your Progress</h2>
+                <div class="player-stats">
+                    <div class="stat-card">
+                        <span class="stat-value" id="total-score">0</span>
+                        <span class="stat-label">Total Score</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="locations-found">0/7</span>
+                        <span class="stat-label">Locations</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="accuracy-rate">0%</span>
+                        <span class="stat-label">Accuracy</span>
+                    </div>
+                </div>
+            </div>
+            <div class="achievements-section">
+                <h3>AR Achievements</h3>
+                <div class="achievement-grid" id="achievement-grid">
+                    <!-- Achievements will be populated here -->
+                </div>
+            </div>
+            <div class="progress-bars">
+                <div class="progress-item">
+                    <span class="progress-label">Campus Explorer Level</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="level-progress"></div>
+                    </div>
+                    <span class="progress-text" id="player-level">Fresher</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile View -->
+        <div id="profile-view" class="view-content">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <span class="avatar-icon">🎓</span>
+                </div>
+                <h2>Campus Explorer</h2>
+                <p class="profile-level" id="profile-level">Level: Fresher</p>
+            </div>
+            <div class="profile-content">
+                <div class="profile-section">
+                    <h3>Campus Journey</h3>
+                    <div class="journey-timeline" id="journey-timeline">
+                        <!-- Timeline will be populated -->
+                    </div>
+                </div>
+                <div class="profile-section">
+                    <h3>Quick Actions</h3>
+                    <div class="action-cards">
+                        <button class="action-card" id="share-progress">
+                            <span class="action-icon">📤</span>
+                            <span class="action-text">Share Progress</span>
+                        </button>
+                        <button class="action-card" id="reset-progress">
+                            <span class="action-icon">🔄</span>
+                            <span class="action-text">Reset Journey</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-view="map-view">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-label">Map</span>
+            </button>
+            <button class="nav-item" id="ar-scan-btn">
+                <span class="nav-icon">📷</span>
+                <span class="nav-label">Scan</span>
+            </button>
+            <button class="nav-item" data-view="progress-view">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Progress</span>
+            </button>
+            <button class="nav-item" data-view="profile-view">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">Profile</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- AR Location Modal -->
+    <div id="ar-location-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content ar-modal">
+            <div class="ar-modal-header">
+                <button class="close-btn" id="close-ar-modal">✕</button>
+                <div class="ar-badge">AR DETECTED</div>
+            </div>
+            <div class="modal-body">
+                <div class="location-ar-view">
+                    <img id="ar-location-image" src="" alt="Location" class="ar-location-img">
+                    <div class="ar-location-overlay">
+                        <h3 id="ar-location-title">Location Name</h3>
+                        <p id="ar-location-info">AR scanning information...</p>
+                    </div>
+                </div>
+                <p id="ar-location-description">Location description...</p>
+                <button class="btn btn--primary btn--full-width" id="start-ar-quiz">
+                    🎯 Start AR Challenge
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Modal -->
+    <div id="quiz-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="quiz-header">
+                <h3 id="quiz-location-name">Location Quiz</h3>
+                <div class="quiz-progress">
+                    <span id="question-counter">1/3</span>
+                    <div class="difficulty-badge" id="quiz-difficulty">Easy</div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <p class="question-text" id="quiz-question">Question will appear here</p>
+                <div class="quiz-options" id="quiz-options">
+                    <!-- Options will be populated -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedback-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content feedback-modal">
+            <div class="feedback-content">
+                <div class="feedback-icon" id="feedback-icon">✅</div>
+                <h3 id="feedback-title">Correct!</h3>
+                <p id="feedback-text">Great job!</p>
+                <div class="feedback-explanation">
+                    <p id="feedback-explanation-text"></p>
+                </div>
+                <button class="btn btn--primary" id="continue-quiz">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completion Modal -->
+    <div id="completion-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content completion-modal">
+            <div class="completion-content">
+                <div class="completion-trophy">🏆</div>
+                <h2>Campus Mastered!</h2>
+                <p>You've completed all AR challenges at Rishihood University!</p>
+                <div class="final-stats">
+                    <div class="stat">
+                        <span class="stat-number" id="final-score">0</span>
+                        <span class="stat-text">Total Points</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" id="final-accuracy">0%</span>
+                        <span class="stat-text">Accuracy</span>
+                    </div>
+                </div>
+                <div class="completion-actions">
+                    <button class="btn btn--primary" id="share-achievement">Share Achievement</button>
+                    <button class="btn btn--outline" id="restart-journey">New Journey</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

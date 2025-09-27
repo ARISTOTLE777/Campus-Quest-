@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusQuest AR - Rishihood University Explorer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+    <!-- AR Camera Overlay -->
+    <div id="ar-overlay" class="ar-overlay">
+        <div class="ar-frame-corners">
+            <div class="corner top-left"></div>
+            <div class="corner top-right"></div>
+            <div class="corner bottom-left"></div>
+            <div class="corner bottom-right"></div>
+        </div>
+        <div class="ar-crosshair"></div>
+    </div>
+
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="screen active">
+        <div class="campus-bg-container">
+            <div class="campus-bg-image"></div>
+            <div class="campus-overlay"></div>
+        </div>
+        
+        <div class="welcome-container">
+            <div class="app-header">
+                <div class="university-logo">
+                    <div class="logo-circle">RU</div>
+                </div>
+                <h1 class="game-title">🎓 CampusQuest AR</h1>
+                <p class="game-subtitle">Rishihood University Explorer</p>
+            </div>
+            
+            <div class="welcome-content">
+                <h2>Explore Campus in Augmented Reality</h2>
+                <p>Discover Rishihood University through an immersive AR experience. Point your device at campus locations, explore iconic buildings, and test your knowledge about our facilities.</p>
+                
+                <div class="campus-stats">
+                    <div class="stat-card">
+                        <span class="stat-number">3</span>
+                        <span class="stat-label">Main Blocks</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">AR Locations</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">21</span>
+                        <span class="stat-label">Challenges</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">∞</span>
+                        <span class="stat-label">Discoveries</span>
+                    </div>
+                </div>
+
+                <div class="ar-features">
+                    <div class="feature-item">
+                        <span class="feature-icon">📱</span>
+                        <span>AR Campus View</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🎯</span>
+                        <span>Interactive Hotspots</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🏆</span>
+                        <span>Achievement System</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🔍</span>
+                        <span>Discover Hidden Facts</span>
+                    </div>
+                </div>
+                
+                <button class="btn btn--primary btn--lg ar-start-btn" id="start-game-btn">
+                    <span class="btn-icon">📲</span>
+                    Start AR Adventure
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AR Game Screen -->
+    <div id="game-screen" class="screen">
+        <!-- Mobile App Header -->
+        <header class="mobile-header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">RU</div>
+                    <span>CampusQuest AR</span>
+                </div>
+                <div class="ar-toggle" id="ar-toggle">
+                    <div class="ar-indicator active"></div>
+                    <span>AR</span>
+                </div>
+            </div>
+            
+            <div class="game-stats-mobile">
+                <div class="stat-item">
+                    <span class="stat-icon">⭐</span>
+                    <span class="stat-value" id="score">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">📍</span>
+                    <span class="stat-value"><span id="completed-locations">0</span>/7</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">🏅</span>
+                    <span class="stat-value" id="player-level">Fresher</span>
+                </div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </header>
+
+        <!-- AR Campus View -->
+        <div class="ar-campus-container">
+            <div class="campus-ar-background">
+                <div class="parallax-layer layer-1"></div>
+                <div class="parallax-layer layer-2"></div>
+                <div class="parallax-layer layer-3"></div>
+            </div>
+            
+            <div class="ar-ui-overlay">
+                <h2 class="ar-title">🎯 Point to Discover Locations</h2>
+                <p class="ar-subtitle">Tap on the glowing AR markers to explore</p>
+            </div>
+            
+            <div class="campus-ar-map" id="campus-map">
+                <!-- AR Location Markers -->
+                <div class="ar-location-marker available" data-location-id="3" style="left: 25%; top: 65%;">
+                    <div class="ar-marker-glow"></div>
+                    <div class="ar-marker-icon">📋</div>
+                    <div class="ar-marker-label">C Block Reception</div>
+                    <div class="ar-marker-distance">5m</div>
+                </div>
+
+                <div class="ar-location-marker locked" data-location-id="1" style="left: 45%; top: 35%;">
+                    <div class="ar-marker-glow"></div>
+                    <div class="ar-marker-icon">📚</div>
+                    <div class="ar-marker-label">B Block Library</div>
+                    <div class="ar-marker-distance">--</div>
+                </div>
+
+                <div class="ar-location-marker locked" data-location-id="2" style="left: 45%; top: 75%;">
+                    <div class="ar-marker-glow"></div>
+                    <div class="ar-marker-icon">🎭</div>
+                    <div class="ar-marker-label">B Block Auditorium</div>
+                    <div class="ar-marker-distance">--</div>
+                </div>
+
+                <div class="ar-location-marker locked" data-location-id="4" style="left: 15%; top: 45%;">
+                    <div class="ar-marker-glow"></div>
+                    <div class="ar-marker-icon">🍽️</div>
+                    <div class="ar-marker-label">A Block Mess</div>
+                    <div class="ar-marker-distance">--</div>
+                </div>
+
+                <div class="ar-location-marker locked" data-location-id="5" style="left: 75%; top: 55%;">
+                    <div class="ar-marker-glow"></div>
+                    <div class="ar-marker-icon">🥘</div>
+                    <div class="ar-marker-label">Pushpa Devi Mess</div>
+                    <div class="ar-marker-distance">--</div>
+                </div>
+
+                <div class="ar-location-marker locked" data-location-id="6" style="left: 30%; top: 20%;">
+                    <div class="ar-marker-glow"></div>
+                    <div class="ar-marker-icon">🏠</div>
+                    <div class="ar-marker-label">R2 Residence</div>
+                    <div class="ar-marker-distance">--</div>
+                </div>
+
+                <div class="ar-location-marker locked" data-location-id="7" style="left: 70%; top: 25%;">
+                    <div class="ar-marker-glow"></div>
+                    <div class="ar-marker-icon">🏢</div>
+                    <div class="ar-marker-label">R1 Residence</div>
+                    <div class="ar-marker-distance">--</div>
+                </div>
+            </div>
+            
+            <!-- AR Bottom Controls -->
+            <div class="ar-controls">
+                <button class="ar-control-btn" id="scan-btn">
+                    <span class="control-icon">🔍</span>
+                    <span>Scan</span>
+                </button>
+                <button class="ar-control-btn" id="map-btn">
+                    <span class="control-icon">🗺️</span>
+                    <span>Map</span>
+                </button>
+                <button class="ar-control-btn" id="achievements-btn">
+                    <span class="control-icon">🏆</span>
+                    <span>Badges</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AR Location Discovery Modal -->
+    <div id="location-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content ar-location-modal">
+            <div class="ar-modal-header">
+                <div class="ar-location-info">
+                    <h3 id="location-title">Location Discovered!</h3>
+                    <div class="ar-location-badge">📍 AR Marker Detected</div>
+                </div>
+                <button class="close-btn" id="close-location-btn">&times;</button>
+            </div>
+            
+            <div class="ar-modal-body">
+                <div class="ar-location-preview">
+                    <div class="location-ar-frame">
+                        <img id="location-image" src="" alt="Location Image" />
+                        <div class="ar-frame-overlay">
+                            <div class="ar-scan-line"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="location-details">
+                    <p id="location-description">Location description goes here</p>
+                    <div class="ar-location-stats">
+                        <div class="ar-stat">
+                            <span class="ar-stat-icon">🎯</span>
+                            <span>3 Challenges</span>
+                        </div>
+                        <div class="ar-stat">
+                            <span class="ar-stat-icon">⭐</span>
+                            <span>60 Max Points</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ar-modal-footer">
+                <button class="btn btn--primary ar-challenge-btn" id="start-trivia-btn">
+                    <span class="btn-icon">🚀</span>
+                    Start AR Challenge
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AR Trivia Modal -->
+    <div id="trivia-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content ar-trivia-modal">
+            <div class="ar-trivia-header">
+                <div class="ar-challenge-info">
+                    <h3 id="location-name">AR Challenge</h3>
+                    <div class="question-progress">
+                        <span class="progress-text">Question <span id="current-question">1</span> of <span id="total-questions">3</span></span>
+                        <div class="difficulty-badge" id="difficulty-badge">Easy</div>
+                    </div>
+                </div>
+                <button class="close-btn" id="close-modal-btn">&times;</button>
+            </div>
+            
+            <div class="ar-trivia-body">
+                <div class="question-container">
+                    <div class="ar-question-frame">
+                        <p class="question-text" id="question-text">Question text goes here?</p>
+                    </div>
+                    <div class="answer-options" id="answer-options">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AR Feedback Modal -->
+    <div id="feedback-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content ar-feedback-modal">
+            <div class="ar-feedback-container">
+                <div class="feedback-ar-effect">
+                    <div class="feedback-icon" id="feedback-icon">✅</div>
+                    <div class="ar-success-ring"></div>
+                </div>
+                <h3 id="feedback-title">Excellent!</h3>
+                <p id="feedback-text">AR Challenge completed successfully!</p>
+                <div class="feedback-details">
+                    <p id="feedback-explanation"></p>
+                </div>
+                <button class="btn btn--primary" id="continue-btn">
+                    <span class="btn-icon">➡️</span>
+                    Continue AR Journey
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AR Completion Screen -->
+    <div id="completion-screen" class="screen">
+        <div class="ar-completion-bg">
+            <div class="completion-particles"></div>
+        </div>
+        
+        <div class="completion-container">
+            <div class="completion-content">
+                <div class="ar-trophy-effect">
+                    <div class="trophy-icon">🏆</div>
+                    <div class="ar-victory-rings">
+                        <div class="victory-ring ring-1"></div>
+                        <div class="victory-ring ring-2"></div>
+                        <div class="victory-ring ring-3"></div>
+                    </div>
+                </div>
+                
+                <h1>AR Master!</h1>
+                <h2>Rishihood University Campus Explored!</h2>
+                
+                <div class="ar-completion-badge">
+                    <span class="badge-icon">🎓</span>
+                    <span class="badge-text">Campus AR Explorer</span>
+                </div>
+                
+                <div class="final-stats">
+                    <div class="final-stat">
+                        <span class="stat-number" id="final-score">0</span>
+                        <span class="stat-description">AR Points</span>
+                    </div>
+                    <div class="final-stat">
+                        <span class="stat-number" id="final-accuracy">0%</span>
+                        <span class="stat-description">Accuracy</span>
+                    </div>
+                    <div class="final-stat">
+                        <span class="stat-number">7</span>
+                        <span class="stat-description">Locations Scanned</span>
+                    </div>
+                </div>
+                
+                <div class="achievements">
+                    <h3>🏅 AR Achievements Unlocked:</h3>
+                    <div class="achievement-list" id="achievement-list">
+                        <!-- Achievements populated by JS -->
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn--primary btn--lg" id="restart-game-btn">
+                        <span class="btn-icon">🔄</span>
+                        New AR Session
+                    </button>
+                    <button class="btn btn--outline btn--lg" id="share-btn">
+                        <span class="btn-icon">📱</span>
+                        Share Achievement
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
